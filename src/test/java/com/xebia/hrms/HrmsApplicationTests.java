@@ -1,0 +1,22 @@
+package com.xebia.hrms;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+/*
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = HrmsApplication.class)
+public class HrmsApplicationTests {
+
+*/
+/*
+	@Test
+	public void contextLoads() {
+	}
+*//*
+
+
+}
+*/
