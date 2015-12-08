@@ -45,7 +45,6 @@ public class EmailSender {
         Properties properties = System.getProperties();
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.starttls.enable", "true");
-//      properties.put("mail.smtp.host", "smtp.gmail.com");
         properties.put("mail.smtp.host", "outlook.office365.com");
         properties.put("mail.smtp.port", "587");
 
@@ -88,7 +87,6 @@ public class EmailSender {
                         }
                     }
                 }
-
                 if (sCurrentLine.contains("5-years") && occassion.contains("anniversary")) {
                     String info[] = occassion.split(" ");
                     sCurrentLine = sCurrentLine.replace("5-years", info[1]);
@@ -114,7 +112,6 @@ public class EmailSender {
         }
 
         try {
-
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(userMail));
             logger.info(emailId + " receiving mail");
@@ -122,11 +119,8 @@ public class EmailSender {
             message.setSubject(subject);
             message.setContent(stringBuffer.toString(), "text/html");
 
-
             Transport.send(message);
             logger.info("Email Sent successfully....");
-
-
         } catch (MessagingException mex) {
             mex.printStackTrace();
         }
