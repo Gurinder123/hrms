@@ -23,7 +23,7 @@ public class HrmsApplication implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
 //        emailService.sendEmail();
-        emailSender.processEmail("Gurinder singh", "gurindersingh@xebia.com", "birthday");
+        emailSender.processEmail("Gurinder singh", "gurindersingh@xebia.com", "anniversary 1");
     }
 
 }

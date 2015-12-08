@@ -1,22 +1,14 @@
 package com.xebia.hrms.utility;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import java.io.*;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 
@@ -43,7 +35,6 @@ public class EmailSender {
     private static final Logger logger = Logger.getLogger(EmailSender.class);
 
     public void processEmail(String name, String emailId, String occassion) {
-
         StringBuffer stringBuffer = new StringBuffer();
         BufferedReader bufferedReader = null;
 
@@ -67,7 +58,7 @@ public class EmailSender {
         if (occassion.equals("birthday")) {
             subject = "Happy Birthday " + name;
             templateLocation = templateLocationBirthday;
-        } else if (occassion.equals("anniversary")) {
+        } else if (occassion.contains("anniversary")) {
             String[] info = occassion.split(" ");
             subject = "Congratulations " + name + " for completing " + info[1] + " year with xebia";
             templateLocation = templateLocationAnniversary;
@@ -97,7 +88,22 @@ public class EmailSender {
                         }
                     }
                 }
+
+                if (sCurrentLine.contains("5-years") && occassion.contains("anniversary")) {
+                    String info[] = occassion.split(" ");
+                    sCurrentLine = sCurrentLine.replace("5-years", info[1]);
+                } else if (sCurrentLine.contains("completion")) {
+                    String info[] = occassion.split(" ");
+                    if (Integer.parseInt(info[1]) > 1) {
+                        sCurrentLine = sCurrentLine.replace("Name", name);
+                        sCurrentLine = sCurrentLine.replace("years", info[1] + " years");
+                    } else {
+                        sCurrentLine = sCurrentLine.replace("Name", name);
+                        sCurrentLine = sCurrentLine.replace("years", info[1] + " year");
+                    }
+                }
                 stringBuffer.append(sCurrentLine);
+
             }
         } catch (FileNotFoundException e) {
             logger.error(e + " file not found");
@@ -107,14 +113,12 @@ public class EmailSender {
             e.printStackTrace();
         }
 
-
         try {
 
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(userMail));
             logger.info(emailId + " receiving mail");
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(emailId));
-            message.setText("heloo");
             message.setSubject(subject);
             message.setContent(stringBuffer.toString(), "text/html");
 
@@ -126,7 +130,6 @@ public class EmailSender {
         } catch (MessagingException mex) {
             mex.printStackTrace();
         }
-
 
     }
 
