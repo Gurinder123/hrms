@@ -1,14 +1,20 @@
 package com.xebia.hrms.utility;
 
+import com.xebia.hrms.model.Employee;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import java.io.*;
 import java.net.URISyntaxException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 
 
@@ -30,11 +36,19 @@ public class EmailSender {
     @Value("${spring.hrms.template.location.confirmation}")
     private String templateLocationConfirmation;
 
+    @Value("${spring.hrms.template.location.probationConfirmationGuide}")
+    private String probationConfirmationGuide;
+
+    @Value("${spring.hrms.template.location.probationReviewForm}")
+    private String probationReviewForm;
+
     private String subject;
+
+    String currentPathOfExecutingJar;
 
     private static final Logger logger = Logger.getLogger(EmailSender.class);
 
-    public void processEmail(String name, String emailId, String occassion) {
+    public void processEmail(Employee employee, String occassion) {
         StringBuffer stringBuffer = new StringBuffer();
         BufferedReader bufferedReader = null;
 
@@ -55,11 +69,15 @@ public class EmailSender {
         });
 
         if (occassion.equals("birthday")) {
-            subject = "Happy Birthday " + name;
+            subject = "Happy Birthday " + employee.getName();
             templateLocation = templateLocationBirthday;
         } else if (occassion.contains("anniversary")) {
             String[] info = occassion.split(" ");
-            subject = "Congratulations " + name + " for completing " + info[1] + " year with xebia";
+            if (Integer.parseInt(info[1]) > 1) {
+                subject = "Congratulations " + employee.getName() + " for completing " + info[1] + " years with xebia";
+            } else {
+                subject = "Congratulations " + employee.getName() + " for completing " + info[1] + " year with xebia";
+            }
             templateLocation = templateLocationAnniversary;
         } else if (occassion.equals("confirmation")) {
             subject = "Confirmation Mail";
@@ -75,14 +93,13 @@ public class EmailSender {
                 logger.error(e);
             }
 
-
             bufferedReader = new BufferedReader(new FileReader(currentPathOfExecutingJar + templateLocation));
             while ((sCurrentLine = bufferedReader.readLine()) != null) {
                 if (sCurrentLine.contains("Birthday")) {
                     String arr[] = sCurrentLine.split(" ");
                     for (String text : arr) {
                         if (text.equals("Birthday")) {
-                            sCurrentLine = sCurrentLine + " " + name;
+                            sCurrentLine = sCurrentLine + " " + employee.getName();
                             break;
                         }
                     }
@@ -93,13 +110,26 @@ public class EmailSender {
                 } else if (sCurrentLine.contains("completion")) {
                     String info[] = occassion.split(" ");
                     if (Integer.parseInt(info[1]) > 1) {
-                        sCurrentLine = sCurrentLine.replace("Name", name);
+                        sCurrentLine = sCurrentLine.replace("Name", employee.getName());
                         sCurrentLine = sCurrentLine.replace("years", info[1] + " years");
                     } else {
-                        sCurrentLine = sCurrentLine.replace("Name", name);
+                        sCurrentLine = sCurrentLine.replace("Name", employee.getName());
                         sCurrentLine = sCurrentLine.replace("years", info[1] + " year");
                     }
                 }
+                if (sCurrentLine.contains("Reporting_manager") && occassion.equals("confirmation")) {
+                    sCurrentLine = sCurrentLine.replace("Reporting_manager", employee.getReportingManager());
+                }
+                if (sCurrentLine.contains("Employee_name") && occassion.equals("confirmation")) {
+                    sCurrentLine = sCurrentLine.replace("Employee_name", employee.getName());
+                    sCurrentLine = sCurrentLine.replace("Date_of_probation", employee.getProbationEndDate().toString());
+                }
+                if (sCurrentLine.contains("15_days") && occassion.equals("confirmation")) {
+                    DateTime dateTime = new DateTime(new Date());
+                    dateTime = dateTime.plusDays(15);
+                    sCurrentLine = sCurrentLine.replace("15_days", dateTime.getDayOfMonth() + "/" + dateTime.getMonthOfYear() + "/" + dateTime.getYear());
+                }
+
                 stringBuffer.append(sCurrentLine);
 
             }
@@ -114,10 +144,19 @@ public class EmailSender {
         try {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(userMail));
-            logger.info(emailId + " receiving mail");
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(emailId));
+            logger.info(employee.getEmailId() + " receiving mail");
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(employee.getEmailId()));
             message.setSubject(subject);
-            message.setContent(stringBuffer.toString(), "text/html");
+            if (occassion.equals("confirmation")) {
+                MimeBodyPart messageBodyPart = new MimeBodyPart();
+                messageBodyPart.setContent(stringBuffer.toString(), "text/html");
+                Multipart multipart = new MimeMultipart();
+                multipart.addBodyPart(messageBodyPart);
+                attachFiles(multipart, currentPathOfExecutingJar);
+                message.setContent(multipart);
+            } else {
+                message.setContent(stringBuffer.toString(), "text/html");
+            }
 
             Transport.send(message);
             logger.info("Email Sent successfully....");
@@ -125,6 +164,18 @@ public class EmailSender {
             mex.printStackTrace();
         }
 
+    }
+
+
+    private void attachFiles(Multipart multipart, String currentPathOfExecutingJar) throws MessagingException {
+        MimeBodyPart attachPart = new MimeBodyPart();
+        try {
+            attachPart.attachFile(currentPathOfExecutingJar + probationReviewForm);
+            attachPart.attachFile(currentPathOfExecutingJar + probationConfirmationGuide);
+        } catch (IOException ex) {
+            logger.error(ex);
+        }
+        multipart.addBodyPart(attachPart);
     }
 
 

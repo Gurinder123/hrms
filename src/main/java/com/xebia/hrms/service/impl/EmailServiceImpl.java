@@ -34,15 +34,17 @@ public class EmailServiceImpl implements EmailService {
 
         if (MapUtils.isNotEmpty(listMap)) {
             for (Map.Entry<Employee, List> entry : listMap.entrySet()) {
-                sendEmailToOutLook(((Employee) entry.getKey()).getName(), ((Employee) entry.getKey()).getEmailId(), entry.getValue());
+                sendEmailToOutLook(((Employee) entry.getKey()), entry.getValue());
             }
         }
     }
 
-    private void sendEmailToOutLook(String name, String emailId, List<String> value) {
+    private void sendEmailToOutLook(Employee emp, List<String> value) {
         for (String val : value) {
-            emailSender.processEmail(name, emailId, val);
-            logger.info(name + " " + emailId + " " + value);
+
+            System.out.println(emp.getName() + " " + emp.getEmailId() + " " + val + " " + emp.getReportingManager());
+//            emailSender.processEmail(emp.getName(), emp.getEmailId(), val, emp.getReportingManager());
+//            // logger.info(name + " " + emailId + " " + value);
         }
     }
 

@@ -73,6 +73,8 @@ public class ExcelParser {
                                     emp.setName(cell.getStringCellValue());
                                 } else if (cell.getColumnIndex() == 10) {
                                     emp.setEmailId(cell.getStringCellValue());
+                                } else if (cell.getColumnIndex() == 9) {
+                                    emp.setReportingManager(cell.getStringCellValue());
                                 }
                                 break;
                         }
