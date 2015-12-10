@@ -40,11 +40,10 @@ public class EmailServiceImpl implements EmailService {
     }
 
     private void sendEmailToOutLook(Employee emp, List<String> value) {
-        for (String val : value) {
 
-            System.out.println(emp.getName() + " " + emp.getEmailId() + " " + val + " " + emp.getReportingManager());
-//            emailSender.processEmail(emp.getName(), emp.getEmailId(), val, emp.getReportingManager());
-//            // logger.info(name + " " + emailId + " " + value);
+        for (String val : value) {
+//                emailSender.processEmail(emp, val);
+             logger.info(emp.getName() + " " + emp.getDOB() + " " + val);
         }
     }
 

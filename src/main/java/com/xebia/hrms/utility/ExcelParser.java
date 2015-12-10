@@ -1,5 +1,6 @@
 package com.xebia.hrms.utility;
 
+import com.xebia.hrms.constant.Constant;
 import com.xebia.hrms.model.Employee;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -26,8 +27,6 @@ import java.util.*;
 @Component
 public class ExcelParser {
 
-    @Value("${spring.hrms.xlsxfile}")
-    private String fileLocation;
 
     private static final Logger logger = Logger.getLogger(ExcelParser.class);
 
@@ -37,8 +36,7 @@ public class ExcelParser {
 
         try {
 
-            FileInputStream file = new FileInputStream(new File(fileLocation));
-
+            FileInputStream file = new FileInputStream(new File(Constant.XLSX_FILE_LOCATION));
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();

@@ -26,13 +26,13 @@ public class HrmsApplication implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        //  emailService.sendEmail();
-        Employee employee = new Employee();
-        employee.setName("Gurinder singh");
-        employee.setEmailId("gurindersingh@xebia.com");
-        employee.setReportingManager("Raj");
-        employee.setProbationEndDate(new Date());
-        emailSender.processEmail(employee,"confirmation");
+        emailService.sendEmail();
+//        Employee employee = new Employee();
+//        employee.setName("Gurinder singh");
+//        employee.setEmailId("gurindersingh@xebia.com");
+//        employee.setReportingManager("Raj");
+//        employee.setProbationEndDate(new Date());
+//        emailSender.processEmail(employee, "confirmation");
     }
 
 }

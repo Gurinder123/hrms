@@ -1,9 +1,9 @@
 package com.xebia.hrms.utility;
 
+import com.xebia.hrms.constant.Constant;
 import com.xebia.hrms.model.Employee;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.mail.*;
@@ -13,7 +13,6 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.*;
 import java.net.URISyntaxException;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 
@@ -21,30 +20,8 @@ import java.util.Properties;
 @Component
 public class EmailSender {
 
-    @Value("${spring.hrms.senderemail}")
-    private String userMail;
-
-    @Value("${spring.hrms.senderpassword}")
-    private String password;
-
-    @Value("${spring.hrms.template.location.birthday}")
-    private String templateLocationBirthday;
-
-    @Value("${spring.hrms.template.location.anniversary}")
-    private String templateLocationAnniversary;
-
-    @Value("${spring.hrms.template.location.confirmation}")
-    private String templateLocationConfirmation;
-
-    @Value("${spring.hrms.template.location.probationConfirmationGuide}")
-    private String probationConfirmationGuide;
-
-    @Value("${spring.hrms.template.location.probationReviewForm}")
-    private String probationReviewForm;
-
     private String subject;
 
-    String currentPathOfExecutingJar;
 
     private static final Logger logger = Logger.getLogger(EmailSender.class);
 
@@ -54,8 +31,6 @@ public class EmailSender {
 
         String templateLocation = null;
 
-        String currentPathOfExecutingJar = null;
-
         Properties properties = System.getProperties();
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.starttls.enable", "true");
@@ -64,13 +39,13 @@ public class EmailSender {
 
         Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(userMail, password);
+                return new PasswordAuthentication(Constant.USERMAIL, Constant.PASSWORD);
             }
         });
 
         if (occassion.equals("birthday")) {
             subject = "Happy Birthday " + employee.getName();
-            templateLocation = templateLocationBirthday;
+            templateLocation = Constant.TEMPLATE_LOCATION_BIRTHDAY;
         } else if (occassion.contains("anniversary")) {
             String[] info = occassion.split(" ");
             if (Integer.parseInt(info[1]) > 1) {
@@ -78,22 +53,16 @@ public class EmailSender {
             } else {
                 subject = "Congratulations " + employee.getName() + " for completing " + info[1] + " year with xebia";
             }
-            templateLocation = templateLocationAnniversary;
+            templateLocation = Constant.TEMPLATE_LOCATION_ANNIVERSARY;
         } else if (occassion.equals("confirmation")) {
             subject = "Confirmation Mail";
-            templateLocation = templateLocationConfirmation;
+            templateLocation = Constant.TEMPLATE_LOCATION_CONFIRMATION;
         }
 
         try {
             String sCurrentLine;
 
-            try {
-                currentPathOfExecutingJar = new File(EmailSender.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getAbsolutePath();
-            } catch (URISyntaxException e) {
-                logger.error(e);
-            }
-
-            bufferedReader = new BufferedReader(new FileReader(currentPathOfExecutingJar + templateLocation));
+            bufferedReader = new BufferedReader(new FileReader(Constant.CURRENT_MACHINE + templateLocation));
             while ((sCurrentLine = bufferedReader.readLine()) != null) {
                 if (sCurrentLine.contains("Birthday")) {
                     String arr[] = sCurrentLine.split(" ");
@@ -143,7 +112,7 @@ public class EmailSender {
 
         try {
             MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(userMail));
+            message.setFrom(new InternetAddress(Constant.USERMAIL));
             logger.info(employee.getEmailId() + " receiving mail");
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(employee.getEmailId()));
             message.setSubject(subject);
@@ -152,7 +121,7 @@ public class EmailSender {
                 messageBodyPart.setContent(stringBuffer.toString(), "text/html");
                 Multipart multipart = new MimeMultipart();
                 multipart.addBodyPart(messageBodyPart);
-                attachFiles(multipart, currentPathOfExecutingJar);
+                attachFiles(multipart);
                 message.setContent(multipart);
             } else {
                 message.setContent(stringBuffer.toString(), "text/html");
@@ -167,15 +136,17 @@ public class EmailSender {
     }
 
 
-    private void attachFiles(Multipart multipart, String currentPathOfExecutingJar) throws MessagingException {
-        MimeBodyPart attachPart = new MimeBodyPart();
+    private void attachFiles(Multipart multipart) throws MessagingException {
+        MimeBodyPart attachReviewForm = new MimeBodyPart();
+        MimeBodyPart attachConfirmationGuide = new MimeBodyPart();
         try {
-            attachPart.attachFile(currentPathOfExecutingJar + probationReviewForm);
-            attachPart.attachFile(currentPathOfExecutingJar + probationConfirmationGuide);
+            attachReviewForm.attachFile(Constant.CURRENT_MACHINE + Constant.PROBATION_REVIEW_FORM);
+            attachConfirmationGuide.attachFile(Constant.CURRENT_MACHINE + Constant.PROBATION_CONFIRMATION_GUIDE);
         } catch (IOException ex) {
             logger.error(ex);
         }
-        multipart.addBodyPart(attachPart);
+        multipart.addBodyPart(attachReviewForm);
+        multipart.addBodyPart(attachConfirmationGuide);
     }
 
 
