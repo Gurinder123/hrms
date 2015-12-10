@@ -1,9 +1,9 @@
 package com.xebia.hrms.utility;
 
-import com.xebia.hrms.constant.Constant;
 import com.xebia.hrms.model.Employee;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.mail.*;
@@ -12,7 +12,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.*;
-import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.Properties;
 
@@ -20,8 +19,35 @@ import java.util.Properties;
 @Component
 public class EmailSender {
 
+    private String userMail;
+
+    private String password;
+
+    private String templateLocationBirthday;
+
+    private String templateLocationAnniversary;
+
+    private String templateLocationConfirmation;
+
+    private String probationConfirmationGuide;
+
+    private String probationReviewForm;
+
     private String subject;
 
+    private String stuff;
+
+    public EmailSender() {
+        Properties properties = loadProperties();
+        userMail = properties.getProperty("spring.hrms.senderemail");
+        password = properties.getProperty("spring.hrms.senderpassword");
+        templateLocationBirthday = properties.getProperty("spring.hrms.template.location.birthday");
+        templateLocationAnniversary = properties.getProperty("spring.hrms.template.location.anniversary");
+        templateLocationConfirmation = properties.getProperty("spring.hrms.template.location.confirmation");
+        stuff = properties.getProperty("spring.hrms.stuff");
+        probationReviewForm = properties.getProperty("spring.hrms.template.location.probationReviewForm");
+        probationConfirmationGuide = properties.getProperty("spring.hrms.template.location.probationConfirmationGuide");
+    }
 
     private static final Logger logger = Logger.getLogger(EmailSender.class);
 
@@ -37,15 +63,16 @@ public class EmailSender {
         properties.put("mail.smtp.host", "outlook.office365.com");
         properties.put("mail.smtp.port", "587");
 
+
         Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(Constant.USERMAIL, Constant.PASSWORD);
+                return new PasswordAuthentication(userMail, password);
             }
         });
 
         if (occassion.equals("birthday")) {
             subject = "Happy Birthday " + employee.getName();
-            templateLocation = Constant.TEMPLATE_LOCATION_BIRTHDAY;
+            templateLocation = templateLocationBirthday;
         } else if (occassion.contains("anniversary")) {
             String[] info = occassion.split(" ");
             if (Integer.parseInt(info[1]) > 1) {
@@ -53,16 +80,17 @@ public class EmailSender {
             } else {
                 subject = "Congratulations " + employee.getName() + " for completing " + info[1] + " year with xebia";
             }
-            templateLocation = Constant.TEMPLATE_LOCATION_ANNIVERSARY;
+            templateLocation = templateLocationAnniversary;
         } else if (occassion.equals("confirmation")) {
             subject = "Confirmation Mail";
-            templateLocation = Constant.TEMPLATE_LOCATION_CONFIRMATION;
+            templateLocation = templateLocationConfirmation;
         }
 
         try {
             String sCurrentLine;
 
-            bufferedReader = new BufferedReader(new FileReader(Constant.CURRENT_MACHINE + templateLocation));
+
+            bufferedReader = new BufferedReader(new FileReader(stuff + templateLocation));
             while ((sCurrentLine = bufferedReader.readLine()) != null) {
                 if (sCurrentLine.contains("Birthday")) {
                     String arr[] = sCurrentLine.split(" ");
@@ -112,7 +140,7 @@ public class EmailSender {
 
         try {
             MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(Constant.USERMAIL));
+            message.setFrom(new InternetAddress(userMail));
             logger.info(employee.getEmailId() + " receiving mail");
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(employee.getEmailId()));
             message.setSubject(subject);
@@ -139,9 +167,10 @@ public class EmailSender {
     private void attachFiles(Multipart multipart) throws MessagingException {
         MimeBodyPart attachReviewForm = new MimeBodyPart();
         MimeBodyPart attachConfirmationGuide = new MimeBodyPart();
+
         try {
-            attachReviewForm.attachFile(Constant.CURRENT_MACHINE + Constant.PROBATION_REVIEW_FORM);
-            attachConfirmationGuide.attachFile(Constant.CURRENT_MACHINE + Constant.PROBATION_CONFIRMATION_GUIDE);
+            attachReviewForm.attachFile(stuff + probationReviewForm);
+            attachConfirmationGuide.attachFile(stuff + probationConfirmationGuide);
         } catch (IOException ex) {
             logger.error(ex);
         }
@@ -149,5 +178,27 @@ public class EmailSender {
         multipart.addBodyPart(attachConfirmationGuide);
     }
 
+    private Properties loadProperties() {
 
+        Properties mainProperties = new Properties();
+
+        FileInputStream file = null;
+
+        String path = "/home/gurinder/Downloads/application.properties";
+
+        try {
+            file = new FileInputStream(path);
+            mainProperties.load(file);
+            file.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return mainProperties;
+    }
 }
+
+
+

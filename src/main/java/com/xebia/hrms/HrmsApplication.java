@@ -32,7 +32,7 @@ public class HrmsApplication implements CommandLineRunner {
 //        employee.setEmailId("gurindersingh@xebia.com");
 //        employee.setReportingManager("Raj");
 //        employee.setProbationEndDate(new Date());
-//        emailSender.processEmail(employee, "confirmation");
+//        emailSender.processEmail(employee, "anniversary 1");
     }
 
 }
