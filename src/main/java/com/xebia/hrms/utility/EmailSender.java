@@ -1,9 +1,10 @@
 package com.xebia.hrms.utility;
 
 import com.xebia.hrms.model.Employee;
+import com.xebia.hrms.model.Property;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.mail.*;
@@ -16,37 +17,21 @@ import java.util.Date;
 import java.util.Properties;
 
 
+
 @Component
 public class EmailSender {
 
-    private String userMail;
 
-    private String password;
+    @Autowired
+    PropertyLoader propertyLoader;
 
-    private String templateLocationBirthday;
-
-    private String templateLocationAnniversary;
-
-    private String templateLocationConfirmation;
-
-    private String probationConfirmationGuide;
-
-    private String probationReviewForm;
+    Property property;
 
     private String subject;
 
-    private String stuff;
-
     public EmailSender() {
-        Properties properties = loadProperties();
-        userMail = properties.getProperty("spring.hrms.senderemail");
-        password = properties.getProperty("spring.hrms.senderpassword");
-        templateLocationBirthday = properties.getProperty("spring.hrms.template.location.birthday");
-        templateLocationAnniversary = properties.getProperty("spring.hrms.template.location.anniversary");
-        templateLocationConfirmation = properties.getProperty("spring.hrms.template.location.confirmation");
-        stuff = properties.getProperty("spring.hrms.stuff");
-        probationReviewForm = properties.getProperty("spring.hrms.template.location.probationReviewForm");
-        probationConfirmationGuide = properties.getProperty("spring.hrms.template.location.probationConfirmationGuide");
+        property= propertyLoader.loadProperties();
+
     }
 
     private static final Logger logger = Logger.getLogger(EmailSender.class);
@@ -66,13 +51,13 @@ public class EmailSender {
 
         Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(userMail, password);
+                return new PasswordAuthentication(property.getUserMail(), property.getPassword());
             }
         });
 
         if (occassion.equals("birthday")) {
             subject = "Happy Birthday " + employee.getName();
-            templateLocation = templateLocationBirthday;
+            templateLocation = property.getTemplateLocationBirthday();
         } else if (occassion.contains("anniversary")) {
             String[] info = occassion.split(" ");
             if (Integer.parseInt(info[1]) > 1) {
@@ -80,17 +65,17 @@ public class EmailSender {
             } else {
                 subject = "Congratulations " + employee.getName() + " for completing " + info[1] + " year with xebia";
             }
-            templateLocation = templateLocationAnniversary;
+            templateLocation = property.getTemplateLocationAnniversary();
         } else if (occassion.equals("confirmation")) {
             subject = "Confirmation Mail";
-            templateLocation = templateLocationConfirmation;
+            templateLocation = property.getTemplateLocationConfirmation();
         }
 
         try {
             String sCurrentLine;
 
 
-            bufferedReader = new BufferedReader(new FileReader(stuff + templateLocation));
+            bufferedReader = new BufferedReader(new FileReader(property.getStuff() + templateLocation));
             while ((sCurrentLine = bufferedReader.readLine()) != null) {
                 if (sCurrentLine.contains("Birthday")) {
                     String arr[] = sCurrentLine.split(" ");
@@ -140,7 +125,7 @@ public class EmailSender {
 
         try {
             MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(userMail));
+            message.setFrom(new InternetAddress(property.getUserMail()));
             logger.info(employee.getEmailId() + " receiving mail");
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(employee.getEmailId()));
             message.setSubject(subject);
@@ -169,8 +154,8 @@ public class EmailSender {
         MimeBodyPart attachConfirmationGuide = new MimeBodyPart();
 
         try {
-            attachReviewForm.attachFile(stuff + probationReviewForm);
-            attachConfirmationGuide.attachFile(stuff + probationConfirmationGuide);
+            attachReviewForm.attachFile(property.getStuff() + property.getProbationReviewForm());
+            attachConfirmationGuide.attachFile(property.getStuff() + property.getProbationConfirmationGuide());
         } catch (IOException ex) {
             logger.error(ex);
         }
@@ -178,26 +163,6 @@ public class EmailSender {
         multipart.addBodyPart(attachConfirmationGuide);
     }
 
-    private Properties loadProperties() {
-
-        Properties mainProperties = new Properties();
-
-        FileInputStream file = null;
-
-        String path = "/home/gurinder/Downloads/application.properties";
-
-        try {
-            file = new FileInputStream(path);
-            mainProperties.load(file);
-            file.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return mainProperties;
-    }
 }
 
 
