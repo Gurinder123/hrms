@@ -17,21 +17,16 @@ import java.util.Date;
 import java.util.Properties;
 
 
-
 @Component
 public class EmailSender {
 
-
-    @Autowired
-    PropertyLoader propertyLoader;
 
     Property property;
 
     private String subject;
 
     public EmailSender() {
-        property= propertyLoader.loadProperties();
-
+        property = new PropertyLoader().loadProperties();
     }
 
     private static final Logger logger = Logger.getLogger(EmailSender.class);
@@ -127,7 +122,7 @@ public class EmailSender {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(property.getUserMail()));
             logger.info(employee.getEmailId() + " receiving mail");
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(employee.getEmailId()));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(employee.getManagerEmailId()));
             message.setSubject(subject);
             if (occassion.equals("confirmation")) {
                 MimeBodyPart messageBodyPart = new MimeBodyPart();

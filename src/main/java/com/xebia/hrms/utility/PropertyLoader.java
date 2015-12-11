@@ -11,7 +11,6 @@ import java.util.Properties;
 /**
  * Created by jaspreet on 10/12/15.
  */
-@Component
 public class PropertyLoader {
 
     Properties mainProperties;
@@ -21,7 +20,7 @@ public class PropertyLoader {
 
     public Property loadProperties() {
 
-        mainProperties  = new Properties();
+        mainProperties = new Properties();
         try {
             file = new FileInputStream(path);
             mainProperties.load(file);
@@ -38,15 +37,15 @@ public class PropertyLoader {
     private void setProperties() {
         property = new Property();
 
-          property.setUserMail(mainProperties.getProperty("spring.hrms.senderemail"));
-            property.setPassword(mainProperties.getProperty("spring.hrms.senderpassword"));
-            property.setTemplateLocationBirthday(mainProperties.getProperty("spring.hrms.template.location.birthday"));
-            property.setTemplateLocationAnniversary(mainProperties.getProperty("spring.hrms.template.location.anniversary"));
-            property.setTemplateLocationConfirmation(mainProperties.getProperty("spring.hrms.template.location.confirmation"));
-            property.setStuff(mainProperties.getProperty("spring.hrms.stuff"));
-            property.setProbationReviewForm(mainProperties.getProperty("spring.hrms.template.location.probationReviewForm"));
-            property.setProbationConfirmationGuide(mainProperties.getProperty("spring.hrms.template.location.probationConfirmationGuide"));
-        }
+        property.setUserMail(mainProperties.getProperty("spring.hrms.senderemail"));
+        property.setPassword(mainProperties.getProperty("spring.hrms.senderpassword"));
+        property.setTemplateLocationBirthday(mainProperties.getProperty("spring.hrms.template.location.birthday"));
+        property.setTemplateLocationAnniversary(mainProperties.getProperty("spring.hrms.template.location.anniversary"));
+        property.setTemplateLocationConfirmation(mainProperties.getProperty("spring.hrms.template.location.confirmation"));
+        property.setStuff(mainProperties.getProperty("spring.hrms.stuff"));
+        property.setProbationReviewForm(mainProperties.getProperty("spring.hrms.template.location.probationReviewForm"));
+        property.setProbationConfirmationGuide(mainProperties.getProperty("spring.hrms.template.location.probationConfirmationGuide"));
     }
+}
 
 

@@ -18,7 +18,9 @@ public class Employee {
     private String reportingManager;
     private String emailId;
 
-    public Employee(String employeeId, String name, String department, String employment_type, Date DOB, Date DOJ, Date probationEndDate, String designation, String reportingManager, String emailId) {
+    private String managerEmailId;
+
+    public Employee(String employeeId, String name, String department, String employment_type, Date DOB, Date DOJ, Date probationEndDate, String designation, String reportingManager, String emailId, String managerEmailId) {
         this.employeeId = employeeId;
         this.name = name;
         this.department = department;
@@ -29,6 +31,7 @@ public class Employee {
         this.designation = designation;
         this.reportingManager = reportingManager;
         this.emailId = emailId;
+        this.managerEmailId = managerEmailId;
     }
 
     public Employee() {
@@ -112,6 +115,14 @@ public class Employee {
 
     public void setEmailId(String emailId) {
         this.emailId = emailId;
+    }
+
+    public String getManagerEmailId() {
+        return managerEmailId;
+    }
+
+    public void setManagerEmailId(String managerEmailId) {
+        this.managerEmailId = managerEmailId;
     }
 
 

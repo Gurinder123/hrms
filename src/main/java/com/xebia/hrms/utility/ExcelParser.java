@@ -73,6 +73,8 @@ public class ExcelParser {
                                     emp.setEmailId(cell.getStringCellValue());
                                 } else if (cell.getColumnIndex() == 9) {
                                     emp.setReportingManager(cell.getStringCellValue());
+                                } else if (cell.getColumnIndex() == 10) {
+                                    emp.setManagerEmailId(cell.getStringCellValue());
                                 }
                                 break;
                         }
@@ -98,7 +100,7 @@ public class ExcelParser {
                         map.put(emp, list);
                     } else {
                         List list = map.get(emp);
-                        list.add("anniversary "+anniversary);
+                        list.add("anniversary " + anniversary);
                     }
                 }
 

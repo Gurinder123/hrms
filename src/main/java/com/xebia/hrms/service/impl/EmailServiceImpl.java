@@ -37,12 +37,15 @@ public class EmailServiceImpl implements EmailService {
                 sendEmailToOutLook(((Employee) entry.getKey()), entry.getValue());
             }
         }
+        else {
+            System.out.println("No Employee data for today");
+        }
     }
 
     private void sendEmailToOutLook(Employee emp, List<String> value) {
 
         for (String val : value) {
-            emailSender.processEmail(emp, val);
+//            emailSender.processEmail(emp, val);
             System.out.println(emp.getName() + " " + emp.getDOB() + " " + val);
         }
     }
