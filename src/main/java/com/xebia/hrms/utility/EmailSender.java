@@ -4,6 +4,8 @@ import com.xebia.hrms.model.Employee;
 import com.xebia.hrms.model.Property;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -99,12 +101,13 @@ public class EmailSender {
                 }
                 if (sCurrentLine.contains("Employee_name") && occassion.equals("confirmation")) {
                     sCurrentLine = sCurrentLine.replace("Employee_name", employee.getName());
-                    sCurrentLine = sCurrentLine.replace("Date_of_probation", employee.getProbationEndDate().toString());
-                }
-                if (sCurrentLine.contains("15_days") && occassion.equals("confirmation")) {
-                    DateTime dateTime = new DateTime(new Date());
-                    dateTime = dateTime.plusDays(15);
-                    sCurrentLine = sCurrentLine.replace("15_days", dateTime.getDayOfMonth() + "/" + dateTime.getMonthOfYear() + "/" + dateTime.getYear());
+                    DateTimeFormatter dtfOut = DateTimeFormat.forPattern("dd/MM/yyyy");
+                    sCurrentLine = sCurrentLine.replace("Date_of_probation", dtfOut.print(new DateTime(employee.getProbationEndDate())));
+                    if (employee.getDesignation().equals("Trainee")) {
+                        sCurrentLine = sCurrentLine.replace("probation_month", "6 months");
+                    } else {
+                        sCurrentLine = sCurrentLine.replace("probation_month", "3 months");
+                    }
                 }
 
                 stringBuffer.append(sCurrentLine);
@@ -122,7 +125,15 @@ public class EmailSender {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(property.getUserMail()));
             logger.info(employee.getEmailId() + " receiving mail");
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(employee.getManagerEmailId()));
+
+            String recipientMail = employee.getEmailId();
+
+            if (occassion.equals("confirmation")) {
+                recipientMail = employee.getManagerEmailId();
+            }
+
+
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipientMail));
             message.setSubject(subject);
             if (occassion.equals("confirmation")) {
                 MimeBodyPart messageBodyPart = new MimeBodyPart();

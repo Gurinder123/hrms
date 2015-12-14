@@ -71,14 +71,20 @@ public class ExcelParser {
                                     emp.setName(cell.getStringCellValue());
                                 } else if (cell.getColumnIndex() == 10) {
                                     emp.setEmailId(cell.getStringCellValue());
+                                } else if (cell.getColumnIndex() == 8) {
+                                    emp.setDesignation(cell.getStringCellValue());
                                 } else if (cell.getColumnIndex() == 9) {
                                     emp.setReportingManager(cell.getStringCellValue());
-                                } else if (cell.getColumnIndex() == 10) {
+                                } else if (cell.getColumnIndex() == 11) {
                                     emp.setManagerEmailId(cell.getStringCellValue());
                                 }
                                 break;
                         }
                     }
+                    if (emp.getName().equals("Jaspreet Singh Juneja")){
+                        System.out.println("here");
+                    }
+
                 }
                 count++;
 

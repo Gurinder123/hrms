@@ -19,7 +19,6 @@ public class EmployeeStatusChecker {
             DateTime empProbationEndDateJoda = new DateTime(empProbationEndDate);
             DateTime todaysDateJoda = new DateTime(todaysDate);
 
-            int empProbationEndDateDay = empProbationEndDateJoda.getDayOfMonth();
             int empProbationEndDateMonth = empProbationEndDateJoda.getMonthOfYear();
             int empProbationEndDateYear = empProbationEndDateJoda.getYear();
 
@@ -27,7 +26,12 @@ public class EmployeeStatusChecker {
             int currentMonth = todaysDateJoda.getMonthOfYear();
             int currentYear = todaysDateJoda.getYear();
 
-            if (empProbationEndDateDay == currentDay && empProbationEndDateMonth == currentMonth && empProbationEndDateYear == currentYear) {
+            if (currentMonth == 12) {
+                currentMonth = 0;
+                currentYear++;
+            }
+
+            if (currentDay == 14 && empProbationEndDateMonth == currentMonth + 1 && empProbationEndDateYear == currentYear) {
                 return true;
             }
 
