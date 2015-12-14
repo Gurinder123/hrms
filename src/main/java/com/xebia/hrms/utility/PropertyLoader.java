@@ -16,7 +16,7 @@ public class PropertyLoader {
     Properties mainProperties;
     Property property;
     FileInputStream file;
-    String path = "/home/gurinder/Downloads/application.properties";
+    String path = "/home/jaspreet/skypedownloads/application.properties";
 
     public Property loadProperties() {
 
@@ -45,6 +45,7 @@ public class PropertyLoader {
         property.setStuff(mainProperties.getProperty("spring.hrms.stuff"));
         property.setProbationReviewForm(mainProperties.getProperty("spring.hrms.template.location.probationReviewForm"));
         property.setProbationConfirmationGuide(mainProperties.getProperty("spring.hrms.template.location.probationConfirmationGuide"));
+        property.setProbationConfirmationGuide(mainProperties.getProperty("spring.hrms.allIndiaEmailId"));
     }
 }
 

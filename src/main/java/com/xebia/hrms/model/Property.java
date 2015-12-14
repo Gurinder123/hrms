@@ -19,6 +19,7 @@ public class Property {
     private String probationReviewForm;
 
     private String stuff;
+    private String allIndiaEmailId;
 
     public String getUserMail() {
         return userMail;
@@ -86,4 +87,11 @@ public class Property {
     }
 
 
+    public String getAllIndiaEmailId() {
+        return allIndiaEmailId;
+    }
+
+    public void setAllIndiaEmailId(String allIndiaEmailId) {
+        this.allIndiaEmailId = allIndiaEmailId;
+    }
 }

@@ -134,6 +134,10 @@ public class EmailSender {
 
 
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipientMail));
+
+            if(occassion.equals("birthday") || occassion.contains("anniversary")){
+                message.addRecipient(Message.RecipientType.CC, new InternetAddress(property.getAllIndiaEmailId()));
+            }
             message.setSubject(subject);
             if (occassion.equals("confirmation")) {
                 MimeBodyPart messageBodyPart = new MimeBodyPart();
