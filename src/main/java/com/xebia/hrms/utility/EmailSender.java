@@ -130,13 +130,14 @@ public class EmailSender {
 
             if (occassion.equals("confirmation")) {
                 recipientMail = employee.getManagerEmailId();
+                logger.info(employee.getManagerEmailId() + " Manager receiving mail");
             }
 
 
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipientMail));
 
             if(occassion.equals("birthday") || occassion.contains("anniversary")){
-                message.addRecipient(Message.RecipientType.CC, new InternetAddress(property.getAllIndiaEmailId()));
+                message.addRecipient(Message.RecipientType.CC, new InternetAddress("jjuneja@xebia.com"));
             }
             message.setSubject(subject);
             if (occassion.equals("confirmation")) {

@@ -17,9 +17,6 @@ public class HrmsApplication implements CommandLineRunner {
     @Autowired
     EmailService emailService;
 
-    @Autowired
-    EmailSender emailSender;
-
     public static void main(String[] args) {
         SpringApplication.run(HrmsApplication.class, args);
     }
@@ -27,13 +24,6 @@ public class HrmsApplication implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
         emailService.sendEmail();
-//        Employee employee = new Employee();
-//        employee.setName("Gurinder singh");
-//        employee.setEmailId("gurindersingh@xebia.com");
-//        employee.setReportingManager("Jaspreet");
-//        employee.setManagerEmailId("jjuneja@xebia.com");
-//        employee.setProbationEndDate(new Date());
-//        emailSender.processEmail(employee, "anniversary 2");
     }
 
 }

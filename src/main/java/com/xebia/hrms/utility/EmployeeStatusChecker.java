@@ -31,7 +31,7 @@ public class EmployeeStatusChecker {
                 currentYear++;
             }
 
-            if (currentDay == 14 && empProbationEndDateMonth == currentMonth + 1 && empProbationEndDateYear == currentYear) {
+            if (currentDay == 15 && empProbationEndDateMonth == currentMonth + 1 && empProbationEndDateYear == currentYear) {
                 return true;
             }
 

@@ -21,6 +21,17 @@ public class Property {
     private String stuff;
     private String allIndiaEmailId;
 
+    public String getXlsxfileLocation() {
+        return xlsxfileLocation;
+    }
+
+    public void setXlsxfileLocation(String xlsxfileLocation) {
+        this.xlsxfileLocation = xlsxfileLocation;
+    }
+
+    private String xlsxfileLocation;
+
+
     public String getUserMail() {
         return userMail;
     }

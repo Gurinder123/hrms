@@ -45,7 +45,8 @@ public class PropertyLoader {
         property.setStuff(mainProperties.getProperty("spring.hrms.stuff"));
         property.setProbationReviewForm(mainProperties.getProperty("spring.hrms.template.location.probationReviewForm"));
         property.setProbationConfirmationGuide(mainProperties.getProperty("spring.hrms.template.location.probationConfirmationGuide"));
-        property.setProbationConfirmationGuide(mainProperties.getProperty("spring.hrms.allIndiaEmailId"));
+        property.setAllIndiaEmailId(mainProperties.getProperty("spring.hrms.allIndiaEmailId"));
+        property.setXlsxfileLocation(mainProperties.getProperty("spring.hrms.xlsxfile"));
     }
 }
 

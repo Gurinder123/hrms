@@ -1,16 +1,13 @@
 package com.xebia.hrms.utility;
 
-import com.xebia.hrms.constant.Constant;
 import com.xebia.hrms.model.Employee;
+import com.xebia.hrms.model.Property;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -27,6 +24,11 @@ import java.util.*;
 @Component
 public class ExcelParser {
 
+    Property property;
+
+    public ExcelParser() {
+        property = new PropertyLoader().loadProperties();
+    }
 
     private static final Logger logger = Logger.getLogger(ExcelParser.class);
 
@@ -36,7 +38,7 @@ public class ExcelParser {
 
         try {
 
-            FileInputStream file = new FileInputStream(new File(Constant.XLSX_FILE_LOCATION));
+            FileInputStream file = new FileInputStream(new File(property.getXlsxfileLocation()));
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
@@ -81,10 +83,6 @@ public class ExcelParser {
                                 break;
                         }
                     }
-                    if (emp.getName().equals("Jaspreet Singh Juneja")){
-                        System.out.println("here");
-                    }
-
                 }
                 count++;
 

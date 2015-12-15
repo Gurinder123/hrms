@@ -44,10 +44,9 @@ public class EmailServiceImpl implements EmailService {
     private void sendEmailToOutLook(Employee emp, List<String> value) {
 
         for (String val : value) {
-            if (emp.getName().equals("Jaspreet Singh Juneja")) {
                 System.out.println(emp.getName() + " " + emp.getDOB() + " " + val);
                 emailSender.processEmail(emp, val);
-            }
+
         }
     }
 
