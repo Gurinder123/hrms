@@ -1,6 +1,7 @@
 package com.xebia.hrms.utility;
 
 import com.xebia.hrms.model.Employee;
+import com.xebia.hrms.model.Property;
 import org.joda.time.DateTime;
 
 import java.util.Date;
@@ -9,6 +10,8 @@ import java.util.Date;
  * Created by gurinder on 8/12/15.
  */
 public class EmployeeStatusChecker {
+
+    private static final String EmploymentTypeContract="Contract";
 
     public static boolean checkConfirmation(Employee emp) {
         Date empProbationEndDate = emp.getProbationEndDate();
@@ -25,13 +28,14 @@ public class EmployeeStatusChecker {
             int currentDay = todaysDateJoda.getDayOfMonth();
             int currentMonth = todaysDateJoda.getMonthOfYear();
             int currentYear = todaysDateJoda.getYear();
+            Property property= new PropertyLoader().loadProperties();
 
             if (currentMonth == 12) {
                 currentMonth = 0;
                 currentYear++;
             }
 
-            if (currentDay == 15 && empProbationEndDateMonth == currentMonth + 1 && empProbationEndDateYear == currentYear) {
+            if (currentDay == property.getConfirmationSchedulerDate() && empProbationEndDateMonth == currentMonth + 1 && empProbationEndDateYear == currentYear) {
                 return true;
             }
 
@@ -41,23 +45,24 @@ public class EmployeeStatusChecker {
 
     public static int checkAnniversary(Employee emp) {
         Date empDoj = emp.getDOJ();
-        if (empDoj != null) {
-            Date todaysDate = new Date();
+            if (empDoj != null) {
+                Date todaysDate = new Date();
 
-            DateTime empDojJoda = new DateTime(empDoj);
-            DateTime todaysDateJoda = new DateTime(todaysDate);
+                DateTime empDojJoda = new DateTime(empDoj);
+                DateTime todaysDateJoda = new DateTime(todaysDate);
 
-            int empDojDay = empDojJoda.getDayOfMonth();
-            int empDojMonth = empDojJoda.getMonthOfYear();
+                int empDojDay = empDojJoda.getDayOfMonth();
+                int empDojMonth = empDojJoda.getMonthOfYear();
 
-            int currentDay = todaysDateJoda.getDayOfMonth();
-            int currentMonth = todaysDateJoda.getMonthOfYear();
+                int currentDay = todaysDateJoda.getDayOfMonth();
+                int currentMonth = todaysDateJoda.getMonthOfYear();
 
-            if (empDojDay == currentDay && currentMonth == empDojMonth) {
-                return todaysDateJoda.getYear() - empDojJoda.getYear();
+                if (empDojDay == currentDay && currentMonth == empDojMonth) {
+                    return todaysDateJoda.getYear() - empDojJoda.getYear();
+                }
+
             }
 
-        }
 
         return 0;
     }

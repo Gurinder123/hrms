@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,7 +38,6 @@ public class ExcelParser {
         Map<Employee, List> map = new HashMap<>();
 
         try {
-
             FileInputStream file = new FileInputStream(new File(property.getXlsxfileLocation()));
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet sheet = workbook.getSheetAt(0);
@@ -71,7 +71,10 @@ public class ExcelParser {
                             case Cell.CELL_TYPE_STRING:
                                 if (cell.getColumnIndex() == 2) {
                                     emp.setName(cell.getStringCellValue());
-                                } else if (cell.getColumnIndex() == 10) {
+                                }else if (cell.getColumnIndex() == 4) {
+                                    emp.setEmployment_type(cell.getStringCellValue());
+                                }
+                                else if (cell.getColumnIndex() == 10) {
                                     emp.setEmailId(cell.getStringCellValue());
                                 } else if (cell.getColumnIndex() == 8) {
                                     emp.setDesignation(cell.getStringCellValue());
@@ -87,7 +90,12 @@ public class ExcelParser {
                 count++;
 
                 birthDay = EmployeeStatusChecker.checkBirthday(emp);
-                anniversary = EmployeeStatusChecker.checkAnniversary(emp);
+                if(emp.getEmployment_type()!=null && emp.getEmployment_type().equals("Contractual")) {
+                    anniversary=0;
+                    logger.info("Not Sending Mail As Employee " + emp.getName() + " is " + emp.getEmployment_type());
+                }else{
+                    anniversary = EmployeeStatusChecker.checkAnniversary(emp);
+                }
                 confirmation = EmployeeStatusChecker.checkConfirmation(emp);
 
                 if (birthDay) {

@@ -16,7 +16,9 @@ public class PropertyLoader {
     Properties mainProperties;
     Property property;
     FileInputStream file;
+    //String path = "/home/xeadmin/application.properties";
     String path = "/home/jaspreet/skypedownloads/application.properties";
+    //String path = "C:/hrmsAutomation/application.properties";
 
     public Property loadProperties() {
 
@@ -47,6 +49,10 @@ public class PropertyLoader {
         property.setProbationConfirmationGuide(mainProperties.getProperty("spring.hrms.template.location.probationConfirmationGuide"));
         property.setAllIndiaEmailId(mainProperties.getProperty("spring.hrms.allIndiaEmailId"));
         property.setXlsxfileLocation(mainProperties.getProperty("spring.hrms.xlsxfile"));
+        property.setHrindiaEmailId(mainProperties.getProperty("spring.hrms.hrIndiaEmailId"));
+        property.setConfirmationSchedulerDate(Integer.parseInt(mainProperties.getProperty("spring.hrms.confirmatiom.schedule.date")));
+        property.setDiviyaEmailId(mainProperties.getProperty("spring.hrms.confirmation.DiviyaEmailId"));
+        property.setMahuaEmailId(mainProperties.getProperty("spring.hrms.confirmation.MahuaEmailId"));
     }
 }
 

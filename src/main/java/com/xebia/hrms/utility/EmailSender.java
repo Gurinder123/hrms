@@ -16,17 +16,16 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.*;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Properties;
 
 
 @Component
 public class EmailSender {
 
-
     Property property;
 
     private String subject;
-
     public EmailSender() {
         property = new PropertyLoader().loadProperties();
     }
@@ -64,7 +63,7 @@ public class EmailSender {
             }
             templateLocation = property.getTemplateLocationAnniversary();
         } else if (occassion.equals("confirmation")) {
-            subject = "Confirmation Mail";
+            subject =  "Employment Confirmation of" + " " + employee.getName();
             templateLocation = property.getTemplateLocationConfirmation();
         }
 
@@ -86,6 +85,7 @@ public class EmailSender {
                 if (sCurrentLine.contains("5-years") && occassion.contains("anniversary")) {
                     String info[] = occassion.split(" ");
                     sCurrentLine = sCurrentLine.replace("5-years", info[1]);
+
                 } else if (sCurrentLine.contains("completion")) {
                     String info[] = occassion.split(" ");
                     if (Integer.parseInt(info[1]) > 1) {
@@ -108,6 +108,14 @@ public class EmailSender {
                     } else {
                         sCurrentLine = sCurrentLine.replace("probation_month", "3 months");
                     }
+                }
+
+                if(sCurrentLine.contains("<Name of the person>") && occassion.contains("anniversary")){
+                    sCurrentLine=sCurrentLine.replace("<Name of the person>", employee.getName());
+                }
+                if(sCurrentLine.contains("<5>") && occassion.contains("anniversary")){
+                    String info[] = occassion.split(" ");
+                    sCurrentLine=sCurrentLine.replace("<5>",info[1]);
                 }
 
                 stringBuffer.append(sCurrentLine);
@@ -137,7 +145,14 @@ public class EmailSender {
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipientMail));
 
             if(occassion.equals("birthday") || occassion.contains("anniversary")){
-                message.addRecipient(Message.RecipientType.CC, new InternetAddress("jjuneja@xebia.com"));
+                logger.info("Sending mail to all india" + property.getAllIndiaEmailId());
+                message.addRecipient(Message.RecipientType.CC, new InternetAddress(property.getAllIndiaEmailId()));
+            }else if (occassion.equals("confirmation")){
+                logger.info("Sending mail to  " + property.getDiviyaEmailId() + " and " + property.getMahuaEmailId() + " in cc");
+                Address[] addresses = new Address[2];
+                addresses[0]=new InternetAddress(property.getDiviyaEmailId());
+                addresses[1]=new InternetAddress(property.getMahuaEmailId());
+                message.addRecipients(Message.RecipientType.CC,addresses);
             }
             message.setSubject(subject);
             if (occassion.equals("confirmation")) {

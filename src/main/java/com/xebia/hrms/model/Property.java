@@ -20,6 +20,39 @@ public class Property {
 
     private String stuff;
     private String allIndiaEmailId;
+    private String hrindiaEmailId;
+
+    private String mahuaEmailId;
+
+    public String getDiviyaEmailId() {
+
+        return diviyaEmailId;
+    }
+
+    public void setDiviyaEmailId(String diviyaEmailId) {
+        this.diviyaEmailId = diviyaEmailId;
+    }
+
+    private String diviyaEmailId;
+
+    public String getMahuaEmailId() {
+        return mahuaEmailId;
+    }
+
+    public void setMahuaEmailId(String mahuaEmailId) {
+        this.mahuaEmailId = mahuaEmailId;
+    }
+
+    public int getConfirmationSchedulerDate() {
+        return confirmationSchedulerDate;
+    }
+
+    public void setConfirmationSchedulerDate(int confirmationSchedulerDate) {
+        this.confirmationSchedulerDate = confirmationSchedulerDate;
+    }
+
+    private int confirmationSchedulerDate;
+
 
     public String getXlsxfileLocation() {
         return xlsxfileLocation;
@@ -104,5 +137,13 @@ public class Property {
 
     public void setAllIndiaEmailId(String allIndiaEmailId) {
         this.allIndiaEmailId = allIndiaEmailId;
+    }
+
+    public String getHrindiaEmailId() {
+        return hrindiaEmailId;
+    }
+
+    public void setHrindiaEmailId(String hrindiaEmailId) {
+        this.hrindiaEmailId = hrindiaEmailId;
     }
 }
