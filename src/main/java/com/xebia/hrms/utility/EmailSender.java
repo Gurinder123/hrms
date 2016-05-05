@@ -77,7 +77,8 @@ public class EmailSender {
                     String arr[] = sCurrentLine.split(" ");
                     for (String text : arr) {
                         if (text.equals("Birthday")) {
-                            sCurrentLine = sCurrentLine + " " + employee.getName();
+                            String info[] = employee.getName().split(" ");
+                            sCurrentLine = sCurrentLine + " " + info[0];
                             break;
                         }
                     }
@@ -137,8 +138,8 @@ public class EmailSender {
             String recipientMail = employee.getEmailId();
 
             if (occassion.equals("confirmation")) {
-                recipientMail = employee.getManagerEmailId();
                 logger.info(employee.getManagerEmailId() + " Manager receiving mail");
+                recipientMail = employee.getManagerEmailId();
             }
 
 
